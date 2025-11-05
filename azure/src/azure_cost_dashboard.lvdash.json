@@ -12,10 +12,19 @@
       "name": "0ae67941",
       "displayName": "Cluster TCO",
       "queryLines": [
-        "SELECT *\n",
-        "FROM billing.azure.actuals_gold\n",
-        "LEFT JOIN system.compute.clusters\n",
-        "  ON CAST(billing.azure.actuals_gold.parsedTags:ClusterId AS STRING) = system.compute.clusters.cluster_id"
+        "SELECT\n",
+        "  ag.*,\n",
+        "  c.*,\n",
+        "  w.warehouse_id AS warehouse_id,\n",
+        "  w.warehouse_name AS warehouse_name,\n",
+        "  w.warehouse_type AS warehouse_type,\n",
+        "  w.warehouse_size AS warehouse_size,\n",
+        "  w.tags AS warehouse_tags\n",
+        "FROM billing.azure.actuals_gold ag\n",
+        "LEFT JOIN system.compute.clusters c\n",
+        "  ON CAST(ag.parsedTags:ClusterId AS STRING) = c.cluster_id\n",
+        "LEFT JOIN system.compute.warehouses w\n",
+        "  ON CAST(ag.parsedTags:SqlEndpointId AS STRING) = w.warehouse_id"
       ]
     },
     {
@@ -265,7 +274,7 @@
           },
           "position": {
             "x": 0,
-            "y": 1,
+            "y": 6,
             "width": 6,
             "height": 6
           }
@@ -311,7 +320,7 @@
           },
           "position": {
             "x": 3,
-            "y": 0,
+            "y": 3,
             "width": 3,
             "height": 1
           }
@@ -357,9 +366,117 @@
           },
           "position": {
             "x": 0,
-            "y": 0,
+            "y": 3,
             "width": 3,
             "height": 1
+          }
+        },
+        {
+          "widget": {
+            "name": "fd08321e",
+            "multilineTextboxSpec": {
+              "lines": [
+                "<span style=\"font-size:24px;font-family:Tahoma\">**Databricks Cloud Infrastructure Cost (Azure)**</span>\n",
+                "\n",
+                "- <span style=\"font-size:12px;font-family:Tahoma\">This dashboard includes the cloud infrastructure & DBU costs related to Azure Databricks</span>\n",
+                "- <span style=\"font-size:12px;font-family:Tahoma\">The cost includes cost related to VM, storage, networking</span>\n",
+                "- <span style=\"font-size:12px;font-family:Tahoma\">Use the global filter for Vendor = Databricks, to filter for just costs related to Databricks deployment (by default, all Azure services are included from Cost Management export) \\\\</span>"
+              ]
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 6,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "total-cost",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "ae7776ee",
+                  "fields": [
+                    {
+                      "name": "sum(price)",
+                      "expression": "SUM(`price`)"
+                    }
+                  ],
+                  "filters": [
+                    {
+                      "expression": "`meterCategory` IS NULL OR `meterCategory` NOT IN ('Azure Databricks')"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "sum(price)"
+                }
+              },
+              "frame": {
+                "title": "Total Azure costs",
+                "showTitle": true
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 4,
+            "width": 3,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "0e81729a",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "ae7776ee",
+                  "fields": [
+                    {
+                      "name": "sum(price)",
+                      "expression": "SUM(`price`)"
+                    }
+                  ],
+                  "filters": [
+                    {
+                      "expression": "`meterCategory` IN ('Azure Databricks')"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "sum(price)"
+                }
+              },
+              "frame": {
+                "title": "Total Databricks costs",
+                "showTitle": true
+              }
+            }
+          },
+          "position": {
+            "x": 3,
+            "y": 4,
+            "width": 3,
+            "height": 2
           }
         }
       ],
@@ -367,7 +484,7 @@
     },
     {
       "name": "94586be2",
-      "displayName": "Cluster TCO",
+      "displayName": "Cost by Compute",
       "layout": [
         {
           "widget": {
@@ -428,12 +545,16 @@
                   },
                   "displayName": "meterCategory"
                 }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "Daily breakdown of cost"
               }
             }
           },
           "position": {
             "x": 0,
-            "y": 2,
+            "y": 5,
             "width": 6,
             "height": 6
           }
@@ -479,7 +600,7 @@
           },
           "position": {
             "x": 2,
-            "y": 0,
+            "y": 2,
             "width": 2,
             "height": 1
           }
@@ -525,7 +646,7 @@
           },
           "position": {
             "x": 4,
-            "y": 0,
+            "y": 2,
             "width": 2,
             "height": 1
           }
@@ -571,7 +692,7 @@
           },
           "position": {
             "x": 2,
-            "y": 1,
+            "y": 3,
             "width": 2,
             "height": 1
           }
@@ -617,7 +738,7 @@
           },
           "position": {
             "x": 0,
-            "y": 1,
+            "y": 3,
             "width": 2,
             "height": 1
           }
@@ -663,7 +784,7 @@
           },
           "position": {
             "x": 0,
-            "y": 0,
+            "y": 2,
             "width": 2,
             "height": 1
           }
@@ -709,9 +830,219 @@
           },
           "position": {
             "x": 4,
-            "y": 1,
+            "y": 3,
             "width": 2,
             "height": 1
+          }
+        },
+        {
+          "widget": {
+            "name": "per-cluster-costs",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "0ae67941",
+                  "fields": [
+                    {
+                      "name": "cluster_name",
+                      "expression": "`cluster_name`"
+                    },
+                    {
+                      "name": "warehouse_name",
+                      "expression": "`warehouse_name`"
+                    },
+                    {
+                      "name": "meterCategory",
+                      "expression": "`meterCategory`"
+                    },
+                    {
+                      "name": "sum(price)",
+                      "expression": "SUM(`price`)"
+                    }
+                  ],
+                  "cubeGroupingSets": {
+                    "sets": [
+                      {
+                        "fieldNames": [
+                          "cluster_name",
+                          "warehouse_name"
+                        ]
+                      },
+                      {
+                        "fieldNames": [
+                          "meterCategory"
+                        ]
+                      }
+                    ]
+                  },
+                  "disaggregated": false,
+                  "orders": [
+                    {
+                      "direction": "ASC",
+                      "expression": "`cluster_name`"
+                    },
+                    {
+                      "direction": "ASC",
+                      "expression": "`warehouse_name`"
+                    },
+                    {
+                      "direction": "ASC",
+                      "expression": "`meterCategory`"
+                    }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "pivot",
+              "encodings": {
+                "rows": [
+                  {
+                    "fieldName": "cluster_name"
+                  },
+                  {
+                    "fieldName": "warehouse_name"
+                  }
+                ],
+                "columns": [
+                  {
+                    "fieldName": "meterCategory"
+                  }
+                ],
+                "cell": {
+                  "type": "multi-cell",
+                  "fields": [
+                    {
+                      "fieldName": "sum(price)",
+                      "cellType": "text"
+                    }
+                  ]
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "Per-cluster costs "
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 11,
+            "width": 6,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "warehouse-name",
+            "queries": [
+              {
+                "name": "dashboards/01f0ba1ed79b126d9495f4decb224384/datasets/01f0ba1ed79b1a3dbfa36d6f070ddd65_warehouse_name",
+                "query": {
+                  "datasetName": "0ae67941",
+                  "fields": [
+                    {
+                      "name": "warehouse_name",
+                      "expression": "`warehouse_name`"
+                    },
+                    {
+                      "name": "warehouse_name_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "filter-single-select",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "warehouse_name",
+                    "queryName": "dashboards/01f0ba1ed79b126d9495f4decb224384/datasets/01f0ba1ed79b1a3dbfa36d6f070ddd65_warehouse_name"
+                  }
+                ]
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "Warehouse Name"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 4,
+            "width": 2,
+            "height": 1
+          }
+        },
+        {
+          "widget": {
+            "name": "f9039b07",
+            "queries": [
+              {
+                "name": "dashboards/01f0ba1ed79b126d9495f4decb224384/datasets/01f0ba1ed79b1a3dbfa36d6f070ddd65_workspace_id",
+                "query": {
+                  "datasetName": "0ae67941",
+                  "fields": [
+                    {
+                      "name": "workspace_id",
+                      "expression": "`workspace_id`"
+                    },
+                    {
+                      "name": "workspace_id_associativity",
+                      "expression": "COUNT_IF(`associative_filter_predicate_group`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "filter-single-select",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "workspace_id",
+                    "queryName": "dashboards/01f0ba1ed79b126d9495f4decb224384/datasets/01f0ba1ed79b1a3dbfa36d6f070ddd65_workspace_id"
+                  }
+                ]
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "Warehouse ID"
+              }
+            }
+          },
+          "position": {
+            "x": 2,
+            "y": 4,
+            "width": 2,
+            "height": 1
+          }
+        },
+        {
+          "widget": {
+            "name": "0828d822",
+            "multilineTextboxSpec": {
+              "lines": [
+                "<span style=\"font-size:24px;font-family:Tahoma\">**Cost by compute**</span>\n",
+                "\n",
+                "- <span style=\"font-size:12px;font-family:Tahoma\">View detailed costs by compute type - cluster or warehouse</span>\n",
+                "- <span style=\"font-size:12px;font-family:Tahoma\">Please note that several cost types will not be tied to a cluster or warehouse, such as severless notebooks, endpoints, networking, apps etc. </span>"
+              ]
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 6,
+            "height": 2
           }
         }
       ],
@@ -990,7 +1321,7 @@
     },
     {
       "name": "6b853bdc",
-      "displayName": "TCO By Tag Key",
+      "displayName": "Cost by Tags",
       "layout": [
         {
           "widget": {
@@ -1050,7 +1381,7 @@
           },
           "position": {
             "x": 0,
-            "y": 0,
+            "y": 2,
             "width": 3,
             "height": 1
           }
@@ -1103,12 +1434,16 @@
                     "type": "categorical"
                   }
                 }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "Daily cost breakdown "
               }
             }
           },
           "position": {
             "x": 0,
-            "y": 2,
+            "y": 4,
             "width": 6,
             "height": 8
           }
@@ -1171,7 +1506,7 @@
           },
           "position": {
             "x": 0,
-            "y": 1,
+            "y": 3,
             "width": 3,
             "height": 1
           }
@@ -1234,7 +1569,7 @@
           },
           "position": {
             "x": 3,
-            "y": 1,
+            "y": 3,
             "width": 3,
             "height": 1
           }
@@ -1250,9 +1585,114 @@
           },
           "position": {
             "x": 3,
-            "y": 0,
+            "y": 2,
             "width": 3,
             "height": 1
+          }
+        },
+        {
+          "widget": {
+            "name": "cost-per-tag-key-value-pair",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "538a5330",
+                  "fields": [
+                    {
+                      "name": "custom_tag_key_value_pairs",
+                      "expression": "`custom_tag_key_value_pairs`"
+                    },
+                    {
+                      "name": "meterCategory",
+                      "expression": "`meterCategory`"
+                    },
+                    {
+                      "name": "sum(price)",
+                      "expression": "SUM(`price`)"
+                    }
+                  ],
+                  "cubeGroupingSets": {
+                    "sets": [
+                      {
+                        "fieldNames": [
+                          "custom_tag_key_value_pairs"
+                        ]
+                      },
+                      {
+                        "fieldNames": [
+                          "meterCategory"
+                        ]
+                      }
+                    ]
+                  },
+                  "disaggregated": false,
+                  "orders": [
+                    {
+                      "direction": "ASC",
+                      "expression": "`custom_tag_key_value_pairs`"
+                    },
+                    {
+                      "direction": "ASC",
+                      "expression": "`meterCategory`"
+                    }
+                  ]
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "pivot",
+              "encodings": {
+                "rows": [
+                  {
+                    "fieldName": "custom_tag_key_value_pairs"
+                  }
+                ],
+                "columns": [
+                  {
+                    "fieldName": "meterCategory"
+                  }
+                ],
+                "cell": {
+                  "type": "multi-cell",
+                  "fields": [
+                    {
+                      "fieldName": "sum(price)",
+                      "cellType": "text"
+                    }
+                  ]
+                }
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "Cost per tag key, value pair"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 12,
+            "width": 5,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "a8dd25a7",
+            "multilineTextboxSpec": {
+              "lines": [
+                "<span style=\"font-size:24px;font-family:Tahoma\">**Cost by tags**</span>\n",
+                "\n",
+                "- <span style=\"font-size:12px;font-family:Tahoma\">Group and filter costs by tag</span>s - these include tags applied directly in Azure, but also Databricks "
+              ]
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 6,
+            "height": 2
           }
         }
       ],
@@ -1261,7 +1701,26 @@
   ],
   "uiSettings": {
     "theme": {
-      "widgetHeaderAlignment": "ALIGNMENT_UNSPECIFIED"
+      "canvasBackgroundColor": {
+        "light": "#FFFFFF",
+        "dark": "#1F272D"
+      },
+      "widgetBackgroundColor": {
+        "light": "#FFFFFF",
+        "dark": "#11171C"
+      },
+      "widgetBorderColor": {
+        "light": "#000000"
+      },
+      "fontColor": {
+        "light": "#000000",
+        "dark": "#E8ECF0"
+      },
+      "selectionColor": {
+        "light": "#FF00FF",
+        "dark": "#8ACAFF"
+      },
+      "widgetHeaderAlignment": "LEFT"
     },
     "genieSpace": {
       "isEnabled": false
