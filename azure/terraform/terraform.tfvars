@@ -1,0 +1,8 @@
+subscription_id = "5a9190c6-03a0-4ed6-b955-6ef9d237e8d7"
+databricks_host = "https://adb-3261367862556039.19.azuredatabricks.net"
+resource_group_name = "databricks"
+location = "eastus"
+storage_account_name = "databrickscloudinfracost"
+container_name = "billing"
+catalog_name = "billing"
+schema_name = "azure"

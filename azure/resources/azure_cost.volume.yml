@@ -1,8 +1,0 @@
-resources:
-  volumes:
-    cost_export:
-      catalog_name: ${var.catalog}
-      schema_name: ${var.schema}
-      name: ${var.volume_name}
-      volume_type: EXTERNAL
-      storage_location: ${var.storage_location}
