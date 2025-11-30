@@ -38,6 +38,7 @@ crash.log
 crash.*.log
 
 # Terraform variable files (potentially containing sensitive data)
+local.tfvars
 *.tfvars.json
 
 # Terraform override files (often used for local development/testing)
