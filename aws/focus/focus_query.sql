@@ -280,7 +280,7 @@ SELECT
     WHEN
       -- SQL notebook run inside a Jobs/DLT pipeline context uses a Jobs Serverless Compute SKU
       u.billing_origin_product = 'SQL'
-      AND (u.sku_name LIKE 'ENTERPRISE_JOBS_SERVERLESS_COMPUTE%')
+      AND (u.sku_name LIKE '%_JOBS_SERVERLESS_COMPUTE%')
     THEN
       COALESCE(u.usage_metadata.dlt_pipeline_id, u.billing_origin_product)
     WHEN
